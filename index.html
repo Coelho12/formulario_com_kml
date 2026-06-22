@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questionário PESA - Serra das Araras (.CSV / .KML)</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #172554;
+            --secondary: #0d9488;
+            --secondary-hover: #0f766e;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-input: #f1f5f9;
+            --border-color: #cbd5e1;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            padding: 16px;
+            line-height: 1.5;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title {
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+
+        .header-title h1 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .header-title p {
+            font-size: 1rem;
+            margin-top: 6px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            background: var(--primary);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin: 32px 0 16px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: var(--bg-card);
+        }
+
+        legend {
+            font-weight: 700;
+            color: var(--primary);
+            padding: 0 10px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        input[type="text"], 
+        input[type="number"], 
+        input[type="date"], 
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 576px) {
+            .grid-row {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        .box-select {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-input);
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .option-item:active {
+            background: #e2e8f0;
+        }
+
+        input[type="radio"], 
+        input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .sub-input {
+            margin-top: 4px;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            border-inline-start: 4px solid var(--secondary);
+        }
+
+        .warning-box {
+            background: #fff9db;
+            border: 1px solid #ffe3e3;
+        }
+
+        /* Estilo do Botão do GPS */
+        .btn-gps {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: background-color 0.2s, transform 0.1s;
+            box-shadow: 0 2px 6px rgba(30, 58, 138, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-gps:active {
+            background-color: var(--primary-hover);
+            transform: scale(0.99);
+        }
+
+        .btn-gps:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-container {
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-main);
+            padding: 16px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+            z-index: 100;
+        }
+
+        .btn-export {
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            width: 100%;
+            font-size: 1.05rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-export:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="inputArea">
+        <div class="header-title">
+            <h1>Questionário de Campo PESA</h1>
+            <p>Exportação Direta de Dados e Mapas</p>
+        </div>
+        
+        <form id="PESAForm">
+            <fieldset>
+                <legend>Controle de Campo</legend>
+                <div class="form-group">
+                    <label>Setor:</label>
+                    <div class="box-select" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));">
+                        <label class="option-item"><input type="radio" name="setor" value="Setor I"> Setor I</label>
+                        <label class="option-item"><input type="radio" name="setor" value="Setor II"> Setor II</label>
+                        <label class="option-item"><input type="radio" name="setor" value="Setor III"> Setor III</label>
+                        <label class="option-item"><input type="radio" name="setor" value="Não informou"> Não informou</label>
+                    </div>
+                </div>
+                <div class="grid-row">
+                    <div class="form-group">
+                        <label>Data:</label>
+                        <input type="date" id="fd_data">
+                    </div>
+                    <div class="form-group">
+                        <label>ID do Imóvel (CNEFE/Mapa):</label>
+                        <input type="text" id="fd_id_imovel" placeholder="Número de identificação">
+                    </div>
+                </div>
+                <div class="grid-row">
+                    <div class="form-group">
+                        <label>Coordenada Oeste (Longitude):</label>
+                        <input type="text" id="fd_coord_o" placeholder="Aguardando GPS ou manual">
+                    </div>
+                    <div class="form-group">
+                        <label>Coordenada Sul (Latitude):</label>
+                        <input type="text" id="fd_coord_s" placeholder="Aguardando GPS ou manual">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="btn-gps" class="btn-gps">📍 Obter Coordenadas do GPS</button>
+                </div>
+            </fieldset>
+
+            <h2>Dados do Entrevistado</h2>
+            <fieldset>
+                <div class="form-group"><label>Nome do Entrevistado:</label><input type="text" id="fd_nome_ent"></div>
+                <div class="form-group"><label>CPF do Entrevistado:</label><input type="text" id="fd_cpf_ent" class="cpf-mask" placeholder="000.000.000-00"></div>
+                <div class="form-group">
+                    <label>1. Condição do entrevistado:</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="radio" name="cond_ent" value="Proprietário (com matrícula em cartório)"> Proprietário (com matrícula em cartório)</label>
+                        <label class="option-item"><input type="radio" name="cond_ent" value="Ocupante, posseiro, etc."> Ocupante, posseiro, etc.</label>
+                        <label class="option-item"><input type="radio" name="cond_ent" value="Representante do responsável pelo imóvel"> Representante do responsável (Gerente/Indicado)</label>
+                        <label class="option-item"><input type="radio" name="cond_ent" value="Caseiro, empregado etc."> Caseiro, empregado etc.</label>
+                        <label class="option-item"><input type="radio" name="cond_ent" value="Outro"> Outro (especificar abaixo):</label>
+                        <input type="text" id="fd_cond_ent_outro" class="sub-input" placeholder="Especifique a condição">
+                        <label class="option-item"><input type="radio" name="cond_ent" value="Não informou"> Não informou</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <h2>Dados do Responsável pelo Imóvel</h2>
+            <fieldset>
+                <div class="form-group"><label>Nome do Responsável:</label><input type="text" id="fd_nome_resp"></div>
+                <div class="grid-row">
+                    <div class="form-group"><label>CPF:</label><input type="text" id="fd_cpf_resp" class="cpf-mask" placeholder="000.000.000-00"></div>
+                    <div class="form-group"><label>Data de Nascimento:</label><input type="date" id="fd_nasc_resp"></div>
+                </div>
+                <div class="form-group">
+                    <label>2. Condição do Responsável pelo Imóvel:</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="radio" name="cond_resp" value="a. Proprietário (título definitivo registrado em cartório)"> a. Proprietário (título definitivo registrado em cartório)</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="b. Proprietário (título precário: direito de uso, recibo de compra/venda etc.)"> b. Proprietário (título precário: direito de uso, recibo, etc.)</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="c. Posseiro (ocupante de área particular, sem conflito, há mais de 5 anos)"> c. Posseiro (área particular, sem conflito, + de 5 anos)</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="d. Posseiro em conflito"> d. Posseiro em conflito</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="e. Arrendatário"> e. Arrendatário</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="f. Ocupante (terra pública, sem conflito)"> f. Ocupante (terra pública, sem conflito)</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="g. Ocupante (terra pública, em conflito)"> g. Ocupante (terra pública, em conflito)</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="h. Não informou"> h. Não informou</label>
+                        <label class="option-item"><input type="radio" name="cond_resp" value="i. Outro"> i. Outro (especificar abaixo):</label>
+                        <input type="text" id="fd_cond_resp_outro" class="sub-input" placeholder="Especifique a outra condição">
+                    </div>
+                </div>
+                
+                <div class="grid-row">
+                    <div class="form-group">
+                        <label>3. O responsável reside no imóvel?</label>
+                        <div class="box-select" style="grid-template-columns: repeat(3, 1fr);">
+                            <label class="option-item"><input type="radio" name="reside" value="Sim"> Sim</label>
+                            <label class="option-item"><input type="radio" name="reside" value="Não"> Não</label>
+                            <label class="option-item"><input type="radio" name="reside" value="Não informou"> N.I.</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>4. É pessoa portadora de doença?</label>
+                        <div class="box-select" style="grid-template-columns: repeat(3, 1fr);">
+                            <label class="option-item"><input type="radio" name="doenca" value="Sim"> Sim</label>
+                            <label class="option-item"><input type="radio" name="doenca" value="Não"> Não</label>
+                            <label class="option-item"><input type="radio" name="doenca" value="Não informou"> N.I.</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>6. Existe ou está previsto alienação/dação para pagamento de dívida com o Estado?</label>
+                    <div class="box-select" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 10px;">
+                        <label class="option-item"><input type="radio" name="divida" value="Sim"> Sim</label>
+                        <label class="option-item"><input type="radio" name="divida" value="Não"> Não</label>
+                        <label class="option-item"><input type="radio" name="divida" value="Não informou"> N.I.</label>
+                    </div>
+                    <textarea id="fd_divida_obs" placeholder="Anotações complementares sobre a dívida/alienação..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>7. De que forma o imóvel foi adquirido?</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="radio" name="aquisicao" value="Compra"> Compra</label>
+                        <label class="option-item"><input type="radio" name="aquisicao" value="Herança"> Herança</label>
+                        <label class="option-item"><input type="radio" name="aquisicao" value="Posse"> Posse</label>
+                        <label class="option-item"><input type="radio" name="aquisicao" value="Ocupação"> Ocupação</label>
+                        <label class="option-item"><input type="radio" name="aquisicao" value="Outra"> Outra (especificar abaixo):</label>
+                        <input type="text" id="fd_aquisicao_outro" class="sub-input" placeholder="Especifique a forma de aquisição">
+                        <label class="option-item"><input type="radio" name="aquisicao" value="Não informou"> Não informou</label>
+                    </div>
+                </div>
+
+                <div class="grid-row">
+                    <div class="form-group">
+                        <label>7.1. Data de aquisição/ocupação:</label>
+                        <input type="text" id="fd_data_aquisicao" placeholder="Ex: DD/MM/AAAA ou Ano">
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: flex-end;">
+                        <label class="option-item" style="width: 100%;"><input type="checkbox" id="fd_data_aquisicao_ni" value="Não informou"> Não informou data</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>8. Há algum documento de posse sob a guarda do responsável atual?</label>
+                    <div class="box-select" style="grid-template-columns: repeat(3, 1fr);">
+                        <label class="option-item"><input type="radio" name="doc" value="Sim"> Sim</label>
+                        <label class="option-item"><input type="radio" name="doc" value="Não"> Não</label>
+                        <label class="option-item"><input type="radio" name="doc" value="Não informou"> N.I.</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>8.1. Se sim, apresentou o documento?</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="radio" name="pres_doc" value="Diz que sim, mas não apresentou"> Diz que sim, mas não apresentou</label>
+                        <label class="option-item"><input type="radio" name="pres_doc" value="Apresentou Escritura Pública"> Apresentou Escritura Pública. Matrícula:</label>
+                        <input type="text" id="fd_doc_matricula" class="sub-input" placeholder="Digite o número da matrícula">
+                        <label class="option-item"><input type="radio" name="pres_doc" value="Recibo de Compra e venda"> Recibo de Compra e venda</label>
+                        <label class="option-item"><input type="radio" name="pres_doc" value="Outro"> Outro (especificar abaixo):</label>
+                        <input type="text" id="fd_pres_doc_outro" class="sub-input" placeholder="Especifique o tipo de documento">
+                        <label class="option-item"><input type="radio" name="pres_doc" value="Não informou"> Não informou</label>
+                        <label class="option-item warning-box"><input type="checkbox" id="fd_nao_foto" value="Não permitiu fotografar"> Não permitiu fotografar o documento</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <h2>Dados do Imóvel</h2>
+            <fieldset>
+                <div class="form-group"><label>9.1. Nome do estabelecimento (Fazenda, sítio, etc):</label><input type="text" id="fd_nome_est_prop"></div>
+                <div class="form-group"><label>9.2. Área total do Imóvel (Anotar unidade: Hectare, Alqueire, etc):</label><input type="text" id="fd_area_total"></div>
+                
+                <label style="font-size:1rem; margin: 16px 0 8px 0; color: var(--primary); border-bottom:1px solid var(--border-color); padding-bottom:4px;">10. Perfil dos Moradores:</label>
+                <div class="grid-row">
+                    <div class="form-group"><label>Nº Domicílios Residenciais:</label><input type="number" id="fd_m_dom" min="0"></div>
+                    <div class="form-group"><label>Nº Pessoas Residentes:</label><input type="number" id="fd_m_pes" min="0"></div>
+                </div>
+                <div class="grid-row" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">
+                    <div class="form-group"><label>Crianças (Até 12 anos):</label><input type="number" id="fd_m_cria" min="0"></div>
+                    <div class="form-group"><label>Adolescentes (12 a 18):</label><input type="number" id="fd_m_adol" min="0"></div>
+                    <div class="form-group"><label>Adultos (18 a 65):</label><input type="number" id="fd_m_adu" min="0"></div>
+                    <div class="form-group"><label>Idosos (+ 65 anos):</label><input type="number" id="fd_m_ido" min="0"></div>
+                </div>
+                
+                <label style="font-size:1rem; margin: 16px 0 8px 0; color: var(--primary); border-bottom:1px solid var(--border-color); padding-bottom:4px;">Escolaridade (Quantidade de Pessoas):</label>
+                <div class="grid-row" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
+                    <div class="form-group"><label>Sem Escolaridade:</label><input type="number" id="fd_e_sem" min="0"></div>
+                    <div class="form-group"><label>Ensino Fundamental:</label><input type="number" id="fd_e_fun" min="0"></div>
+                    <div class="form-group"><label>Ensino Médio:</label><input type="number" id="fd_e_med" min="0"></div>
+                    <div class="form-group"><label>Ensino Superior:</label><input type="number" id="fd_e_sup" min="0"></div>
+                </div>
+            </fieldset>
+
+            <h2>11. Infraestrutura das Moradias</h2>
+            <fieldset>
+                <div class="form-group">
+                    <label>a. Tipo de construção predominante:</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="radio" name="inf_const" value="Alvenaria"> Alvenaria</label>
+                        <label class="option-item"><input type="radio" name="inf_const" value="Madeira"> Madeira</label>
+                        <label class="option-item"><input type="radio" name="inf_const" value="Outra"> Outra (especificar abaixo):</label>
+                        <input type="text" id="fd_inf_const_outro" class="sub-input" placeholder="Especifique o tipo de construção">
+                        <label class="option-item"><input type="radio" name="inf_const" value="Não informou"> Não informou</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>b. Abastecimento d'água (Múltipla escolha):</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="checkbox" name="inf_agua" value="Rede"> Rede Geral</label>
+                        <label class="option-item"><input type="checkbox" name="inf_agua" value="Poço artesiano"> Poço artesiano</label>
+                        <label class="option-item"><input type="checkbox" name="inf_agua" value="Cacimba"> Cacimba</label>
+                        <label class="option-item"><input type="checkbox" name="inf_agua" value="Captação/bombeamento in rio ou lago etc."> Captação/bombeamento em rio ou lago etc.</label>
+                        <label class="option-item"><input type="checkbox" name="inf_agua" value="Captação manual em rio ou lago"> Captação manual em rio ou lago</label>
+                        <label class="option-item"><input type="checkbox" name="inf_agua" value="Não informou"> Não informou</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>c. Energia elétrica:</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="checkbox" name="inf_luz" value="Rede"> Rede Elétrica Oficial</label>
+                        <label class="option-item"><input type="checkbox" name="inf_luz" value="Gerador próprio"> Gerador próprio</label>
+                        <label class="option-item"><input type="checkbox" name="inf_luz" value="Gerador Comunitário"> Gerador Comunitário</label>
+                        <label class="option-item"><input type="checkbox" name="inf_luz" value="Outro"> Outro (especificar abaixo):</label>
+                        <input type="text" id="fd_inf_luz_outro" class="sub-input" placeholder="Especifique a fonte de energia">
+                        <label class="option-item"><input type="checkbox" name="inf_luz" value="Não informou"> Não informou</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>d. Saneamento (Possui Instalação Sanitária/Banheiro):</label>
+                    <div class="box-select" style="grid-template-columns: repeat(3, 1fr);">
+                        <label class="option-item"><input type="radio" name="inf_banho" value="Sim"> Sim</label>
+                        <label class="option-item"><input type="radio" name="inf_banho" value="Não"> Não</label>
+                        <label class="option-item"><input type="radio" name="inf_banho" value="Não informou"> N.I.</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>e. Destinação de efluentes domésticos:</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="checkbox" name="inf_efl" value="Fossa simples"> Fossa simples</label>
+                        <label class="option-item"><input type="checkbox" name="inf_efl" value="Fossa asséptica"> Fossa asséptica</label>
+                        <label class="option-item"><input type="checkbox" name="inf_efl" value="Esgoto a céu aberto sobre o solo"> Esgoto a céu aberto sobre o solo</label>
+                        <label class="option-item"><input type="checkbox" name="inf_efl" value="Despejo em fonte hídrica (rio, lago etc)"> Despejo em fonte hídrica (rio, lago etc)</label>
+                        <label class="option-item"><input type="checkbox" name="inf_efl" value="Não informou"> Não informou</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <h2>12. Benfeitorias Existentes</h2>
+            <fieldset>
+                <div class="box-select">
+                    <label class="option-item"><input type="checkbox" name="benf" value="Estradas e caminhos"> Estradas e caminhos. Metragem aprox. (Km):</label>
+                    <input type="text" id="fd_benf_est" class="sub-input" placeholder="Ex: 2.5">
+                    
+                    <label class="option-item"><input type="checkbox" name="benf" value="Cerca"> Cerca. Metragem aprox. (Km):</label>
+                    <input type="text" id="fd_benf_cer" class="sub-input" placeholder="Ex: 5.0">
+                    
+                    <label class="option-item"><input type="checkbox" name="benf" value="Curral"> Curral</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Galpão"> Galpão</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Barragem ou açude"> Barragem ou açude</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Captação de água"> Captação de água</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Poço artesiano"> Poço artesiano</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Poço – cisterna ou cacimba"> Poço – cisterna ou cacimba</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Unidade de beneficiamento"> Unidade de beneficiamento</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Tanque peixes (piscicultura)"> Tanque peixes (piscicultura)</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Outros"> Outros (especificar abaixo):</label>
+                    <input type="text" id="fd_benf_outro" class="sub-input" placeholder="Especifique outras estruturas">
+                    <label class="option-item"><input type="checkbox" name="benf" value="Não existem benfeitorias"> Não existem benfeitorias</label>
+                    <label class="option-item"><input type="checkbox" name="benf" value="Não informou"> Não informou</label>
+                </div>
+            </fieldset>
+
+            <h2>13. Lavouras Temporárias</h2>
+            <fieldset>
+                <div class="box-select">
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Milho"> Milho. Área aproximada (Hectares):</label>
+                    <input type="text" id="fd_lavt_milho" class="sub-input" placeholder="Área cultivada de milho">
+                    
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Feijão"> Feijão. Área aproximada (Hectares):</label>
+                    <input type="text" id="fd_lavt_feijao" class="sub-input" placeholder="Área cultivada de feijão">
+                    
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Mandioca"> Mandioca. Área aproximada (Hectares):</label>
+                    <input type="text" id="fd_lavt_mandioca" class="sub-input" placeholder="Área cultivada de mandioca">
+                    
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Outras temporárias"> Outras temporárias. Área aproximada (Hectares):</label>
+                    <input type="text" id="fd_lavt_outras" class="sub-input" placeholder="Área de outras lavouras">
+                    
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Hortícolas"> Hortícolas. Área aproximada (Hectares):</label>
+                    <input type="text" id="fd_lavt_horti" class="sub-input" placeholder="Área cultivada de hortícolas">
+                    
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Roçado diversificado"> Roçado diversificado. Área aproximada (Hectares):</label>
+                    <input type="text" id="fd_lavt_rocado" class="sub-input" placeholder="Área total do roçado">
+                    
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Não existem lavouras temporárias"> Não existem lavouras temporárias</label>
+                    <label class="option-item"><input type="checkbox" name="lav_temp" value="Não informou"> Não informou</label>
+                </div>
+            </fieldset>
+
+            <h2>14. Lavouras Permanentes (Frutíferas)</h2>
+            <fieldset>
+                <div class="box-select">
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Manga"> Manga</label>
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Abacate"> Abacate</label>
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Citros (laranja, limão, tangerina etc.)"> Citros (laranja, limão, tangerina etc.)</label>
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Côco"> Côco</label>
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Outros"> Outros</label>
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Pomar diversificado"> Pomar diversificado. Área aprox. (Hectares):</label>
+                    <input type="text" id="fd_lavp_pomar" class="sub-input" placeholder="Área estimada do pomar">
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Não existem lavouras permanentes"> Não existem lavouras permanentes</label>
+                    <label class="option-item"><input type="checkbox" name="lav_perm" value="Não informou"> Não informou</label>
+                </div>
+            </fieldset>
+
+            <h2>15. Criações e Extrativismo</h2>
+            <fieldset>
+                <label style="font-weight:700; color:var(--primary); font-size:0.95rem; margin-bottom:12px; display:block;">Pecuária / Criações (Nº de Cabeças):</label>
+                <div class="grid-row">
+                    <div class="form-group"><label>Aves:</label><input type="text" id="fd_cria_aves" placeholder="Ex: 20"></div>
+                    <div class="form-group"><label>Suínos:</label><input type="text" id="fd_cria_sui" placeholder="Ex: 5"></div>
+                    <div class="form-group"><label>Outros Pequenos:</label><input type="text" id="fd_cria_peq" placeholder="Ex: 10"></div>
+                </div>
+                <div class="grid-row">
+                    <div class="form-group"><label>Bovinos:</label><input type="text" id="fd_cria_bov" placeholder="Ex: 50"></div>
+                    <div class="form-group"><label>Outros Grande Porte:</label><input type="text" id="fd_cria_gde" placeholder="Ex: 2"></div>
+                </div>
+                
+                <label style="font-weight:700; color:var(--primary); font-size:0.95rem; margin-top:20px; margin-bottom:12px; display:block;">Extrativismo Vegetal (Kg/Ano):</label>
+                <div class="grid-row">
+                    <div class="form-group"><label>Pequi (Kg/ano):</label><input type="text" id="fd_ext_pequi" placeholder="Volume coletado"></div>
+                    <div class="form-group"><label>Baru (Kg/ano):</label><input type="text" id="fd_ext_baru" placeholder="Volume coletado"></div>
+                    <div class="form-group"><label>Outros (Kg/ano):</label><input type="text" id="fd_ext_out" placeholder="Volume coletado"></div>
+                </div>
+                <div class="form-group" style="margin-top:8px;">
+                    <label class="option-item"><input type="checkbox" id="fd_ext_mad" value="Madeira (uso doméstico)"> Extração de Madeira (apenas para uso doméstico)</label>
+                </div>
+            </fieldset>
+
+            <h2>Fauna, Impactos e Conflitos</h2>
+            <fieldset>
+                <div class="form-group">
+                    <label>16. Ocorre atividade de Pesca?</label>
+                    <div class="box-select" style="grid-template-columns: repeat(3, 1fr); margin-bottom:10px;">
+                        <label class="option-item"><input type="radio" name="pesca" value="Sim"> Sim</label>
+                        <label class="option-item"><input type="radio" name="pesca" value="Não"> Não</label>
+                        <label class="option-item"><input type="radio" name="pesca" value="Não informou"> N.I.</label>
+                    </div>
+                    <input type="text" id="fd_pesca_esp" placeholder="Principais espécies capturadas...">
+                </div>
+                <div class="form-group">
+                    <label>17. Ocorre atividade de Caça?</label>
+                    <div class="box-select" style="grid-template-columns: repeat(3, 1fr); margin-bottom:10px;">
+                        <label class="option-item"><input type="radio" name="caca" value="Sim"> Sim</label>
+                        <label class="option-item"><input type="radio" name="caca" value="Não"> Não</label>
+                        <label class="option-item"><input type="radio" name="caca" value="Não informou"> N.I.</label>
+                    </div>
+                    <input type="text" id="fd_caca_esp" placeholder="Principais espécies afectadas...">
+                </div>
+                <div class="form-group">
+                    <label>18. Impactos ambientais observados (baixo impacto):</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="checkbox" name="imp_b" value="Efluentes despejados em corpos d´água sem tratamento"> Efluentes despejados em corpos d´água sem tratamento</label>
+                        <label class="option-item"><input type="checkbox" name="imp_b" value="Uso de APP (margens, declives e topo de morro)"> Uso de APP (margens, declives e topo de morro)</label>
+                        <label class="option-item"><input type="checkbox" name="imp_b" value="Desmatamento de nascentes"> Desmatamento de nascentes</label>
+                        <label class="option-item"><input type="checkbox" name="imp_b" value="Uso de fogo sem autorização/sem controle"> Uso de fogo sem autorização/sem controle</label>
+                        <label class="option-item"><input type="checkbox" name="imp_b" value="Não informou"> Não informou</label>
+                        <label class="option-item"><input type="checkbox" name="imp_b" value="Outros"> Outros (especificar abaixo):</label>
+                        <input type="text" id="fd_imp_b_outro" class="sub-input" placeholder="Especifique os outros impactos">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>19. Ocorre atividade de alto/significativo impacto ambiental?</label>
+                    <div class="box-select" style="grid-template-columns: repeat(3, 1fr); margin-bottom:10px;">
+                        <label class="option-item"><input type="radio" name="imp_alto" value="Sim"> Sim</label>
+                        <label class="option-item"><input type="radio" name="imp_alto" value="Não"> Não</label>
+                        <label class="option-item"><input type="radio" name="imp_alto" value="Não informou"> N.I.</label>
+                    </div>
+                    <textarea id="fd_imp_alto_desc" placeholder="Se sim, detalhar o tipo (Ex: carvoaria, extração de madeira comercial, pecuária de grande porte com nº de cabeças)..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>20. Conflitos socioambientais observados:</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="checkbox" name="conf" value="De uso dos recursos entre moradores da UC"> De uso dos recursos entre moradores da UC</label>
+                        <label class="option-item"><input type="checkbox" name="conf" value="De uso dos recursos com pessoas de fora da UC"> De uso dos recursos com pessoas de fora da UC</label>
+                        <label class="option-item"><input type="checkbox" name="conf" value="De terra entre moradores da UC"> De terra entre moradores da UC</label>
+                        <label class="option-item"><input type="checkbox" name="conf" value="De terra com pessoas de fora da UC"> De terra com pessoas de fora da UC</label>
+                        <label class="option-item"><input type="checkbox" name="conf" value="Outros conflitos"> Outros conflitos</label>
+                    </div>
+                    <textarea id="fd_conf_desc" style="margin-top:10px;" placeholder="Breve histórico do conflito (atores envolvidos, motivações, se está resolvido ou em andamento)..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>21. Grupo étnico pertencente:</label>
+                    <div class="box-select">
+                        <label class="option-item"><input type="radio" name="grupo_etnico" value="Povos indígenas"> 1. Povos indígenas</label>
+                        <label class="option-item"><input type="radio" name="grupo_etnico" value="Quilombolas"> 2. Quilombolas</label>
+                        <label class="option-item"><input type="radio" name="grupo_etnico" value="Povos de matriz africana/comunidade de terreiros"> 3. Povos de matriz africana/comunidade de terreiros</label>
+                        <label class="option-item"><input type="radio" name="grupo_etnico" value="Extrativistas"> 4. Extrativistas</label>
+                        <label class="option-item"><input type="radio" name="grupo_etnico" value="Outro"> 5. Outro (especificar abaixo):</label>
+                        <input type="text" id="fd_grupo_etnico_outro" class="sub-input" placeholder="Especifique o grupo étnico">
+                        <label class="option-item"><input type="radio" name="grupo_etnico" value="Não informado"> 10. Não informado</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="btn-container" style="display: flex; gap: 16px; justify-content: center; max-width: 720px; margin: 40px auto 0 auto; flex-wrap: wrap;">
+                <button type="button" class="btn-export" style="background-color: var(--secondary); box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);" onclick="gerarCSVMatriz()">Exportar Respostas em .CSV</button>
+                <button type="button" class="btn-export" style="background-color: #16a34a; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);" onclick="gerarKML()">Exportar Mapa (.KML)</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    // Lógica robusta e com fallback automático para capturar as coordenadas
+    function capturarCoordenadas() {
+        const btn = document.getElementById('btn-gps');
+        const inputOeste = document.getElementById('fd_coord_o');
+        const inputSul = document.getElementById('fd_coord_s');
+
+        if (!navigator.geolocation) {
+            alert("Atenção: A geolocalização não é suportada por este navegador ou aparelho.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "⏳ Conectando aos Satélites (Alta Precision)...";
+
+        // Configuração 1: Tentativa com GPS Físico (Alta precisão)
+        const opcoesAltaPrecisao = {
+            enableHighAccuracy: true,
+            timeout: 25000, // Dá 25 segundos para o satélite responder em campo aberto
+            maximumAge: 0
+        };
+
+        function sucesso(position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            inputSul.value = lat.toFixed(6);
+            inputOeste.value = lon.toFixed(6);
+
+            btn.disabled = false;
+            btn.innerText = "📍 Obter Coordenadas do GPS";
+            alert("Coordenadas obtidas com sucesso!");
+        }
+
+        function tratarFalhaAltaPrecisao(error) {
+            // Se falhou por falta de sinal de satélite ou demora, tenta imediatamente por triangulação de rede (Maneira mais rápida)
+            if (error.code === error.TIMEOUT || error.code === error.POSITION_UNAVAILABLE) {
+                btn.innerText = "⏳ Sinal fraco. Alternando para modo de rede...";
+                
+                navigator.geolocation.getCurrentPosition(sucesso, falhaGeral, {
+                    enableHighAccuracy: false,
+                    timeout: 15000,
+                    maximumAge: 30000 // Aceita cache de rede recente
+                });
+            } else {
+                falhaGeral(error);
+            }
+        }
+
+        function falhaGeral(error) {
+            btn.disabled = false;
+            btn.innerText = "📍 Obter Coordenadas do GPS";
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("Erro: Permissão negada! Você precisa permitir o acesso à localização nas configurações do seu navegador ou do celular.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Erro: Localização indisponível! Ligue o GPS/Localização geral do seu smartphone nas notificações de topo.");
+                    break;
+                case error.TIMEOUT:
+                    alert("Erro: Tempo limite esgotado! O sinal de rede/satélite está muito fraco neste local. Tente mover-se para uma área mais limpa.");
+                    break;
+                default:
+                    alert("Erro ao acessar o GPS: " + error.message);
+                    break;
+            }
+        }
+
+        // Inicia a busca com o parâmetro de alta precisão
+        navigator.geolocation.getCurrentPosition(sucesso, tratarFalhaAltaPrecisao, opcoesAltaPrecisao);
+    }
+
+    // Vincula a função ao botão de forma moderna e segura após o carregamento da página
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById('btn-gps').addEventListener('click', capturarCoordenadas);
+    });
+
+    // Máscaras de CPF
+    document.querySelectorAll('.cpf-mask').forEach(input => {
+        input.addEventListener('input', e => {
+            let v = e.target.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 9) v = v.replace(/^(\d{3})(\d{3})(\d{3})(\d{1,2})$/, "$1.$2.$3-$4");
+            else if (v.length > 6) v = v.replace(/^(\d{3})(\d{3})(\d{1,3})$/, "$1.$2.$3");
+            else if (v.length > 3) v = v.replace(/^(\d{3})(\d{1,3})$/, "$1.$2");
+            e.target.value = v;
+        });
+    });
+
+    function obterRadio(nome) {
+        const selecionado = document.querySelector(`input[name="${nome}"]:checked`);
+        return selecionado ? selecionado.value : "";
+    }
+
+    function obterCheckboxes(nome) {
+        const marcados = document.querySelectorAll(`input[name="${nome}"]:checked`);
+        const valores = Array.from(marcados).map(cb => cb.value);
+        return valores.length > 0 ? valores.join(" | ") : "";
+    }
+
+    function obterTexto(id) {
+        const el = document.getElementById(id);
+        return (el && el.value.trim() !== "") ? el.value.trim() : "";
+    }
+
+    function formatarDataBR(dataStr) {
+        if (!dataStr || dataStr === "") return "";
+        const d = dataStr.split("-");
+        return d.length === 3 ? `${d[2]}/${d[1]}/${d[0]}` : dataStr;
+    }
+
+    function escaparCSV(texto) {
+        if (texto === null || texto === undefined) return '""';
+        let stringVal = String(texto).replace(/[\r\n]+/g, " ").trim();
+        stringVal = stringVal.replace(/"/g, '""');
+        return `"${stringVal}"`;
+    }
+
+    function gerarCSVMatriz() {
+        let condEnt = obterRadio("cond_ent");
+        if (condEnt === "Outro" && obterTexto("fd_cond_ent_outro") !== "") {
+            condEnt = `Outro (${obterTexto("fd_cond_ent_outro")})`;
+        }
+
+        let condResp = obterRadio("cond_resp");
+        if (condResp === "i. Outro" && obterTexto("fd_cond_resp_outro") !== "") {
+            condResp = `Outro (${obterTexto("fd_cond_resp_outro")})`;
+        }
+
+        let aquisicao = obterRadio("aquisicao");
+        if (aquisicao === "Outra" && obterTexto("fd_aquisicao_outro") !== "") {
+            aquisicao = `Outra (${obterTexto("fd_aquisicao_outro")})`;
+        }
+
+        const dataAquisicao = document.getElementById("fd_data_aquisicao_ni").checked ? "Não informou" : obterTexto("fd_data_aquisicao");
+
+        let presDoc = obterRadio("pres_doc");
+        if (presDoc === "Apresentou Escritura Pública" && obterTexto("fd_doc_matricula") !== "") {
+            presDoc += ` (Matrícula: ${obterTexto("fd_doc_matricula")})`;
+        }
+        if (presDoc === "Outro" && obterTexto("fd_pres_doc_outro") !== "") {
+            presDoc = `Outro (${obterTexto("fd_pres_doc_outro")})`;
+        }
+
+        let infConst = obterRadio("inf_const");
+        if (infConst === "Outra" && obterTexto("fd_inf_const_outro") !== "") {
+            infConst = `Outra (${obterTexto("fd_inf_const_outro")})`;
+        }
+
+        let grupoEtnico = obterRadio("grupo_etnico");
+        if (grupoEtnico === "Outro" && obterTexto("fd_grupo_etnico_outro") !== "") {
+            grupoEtnico = `Outro (${obterTexto("fd_grupo_etnico_outro")})`;
+        }
+
+        const mapeamentoDados = [
+            { id: "Setor", valor: obterRadio("setor") },
+            { id: "Data_Inspecao", valor: formatarDataBR(obterTexto("fd_data")) },
+            { id: "ID_Imovel", valor: obterTexto("fd_id_imovel") },
+            { id: "Coordenada_Oeste", valor: obterTexto("fd_coord_o") },
+            { id: "Coordenada_Sul", valor: obterTexto("fd_coord_s") },
+            { id: "Nome_Entrevistado", valor: obterTexto("fd_nome_ent") },
+            { id: "CPF_Entrevistado", valor: obterTexto("fd_cpf_ent") },
+            { id: "Condicao_Entrevistado", valor: condEnt },
+            { id: "Nome_Responsavel", valor: obterTexto("fd_nome_resp") },
+            { id: "CPF_Responsavel", valor: obterTexto("fd_cpf_resp") },
+            { id: "Data_Nascimento_Responsavel", valor: formatarDataBR(obterTexto("fd_nasc_resp")) },
+            { id: "Condicao_Responsavel", valor: condResp },
+            { id: "Responsavel_Reside", valor: obterRadio("reside") },
+            { id: "Portador_Doenca", valor: obterRadio("doenca") },
+            { id: "Alienacao_Divida_Estado", valor: obterRadio("divida") },
+            { id: "Divida_Observacoes", valor: obterTexto("fd_divida_obs") },
+            { id: "Forma_Aquisicao", valor: aquisicao },
+            { id: "Data_Aquisicao_Ocupacao", valor: dataAquisicao },
+            { id: "Documento_Posse_Guarda", valor: obterRadio("doc") },
+            { id: "Documento_Apresentado", valor: presDoc },
+            { id: "Recusa_Fotografia_Doc", valor: document.getElementById("fd_nao_foto").checked ? "Sim" : "Não" },
+            { id: "Nome_Estabelecimento", valor: obterTexto("fd_nome_est_prop") },
+            { id: "Area_Total_Declarada", valor: obterTexto("fd_area_total") },
+            { id: "Num_Domicilios", valor: obterTexto("fd_m_dom") },
+            { id: "Num_Residentes_Total", valor: obterTexto("fd_m_pes") },
+            { id: "Residentes_Criantes", valor: obterTexto("fd_m_cria") },
+            { id: "Residentes_Adolescentes", valor: obterTexto("fd_m_adol") },
+            { id: "Residentes_Adultos", valor: obterTexto("fd_m_adu") },
+            { id: "Residentes_Idosos", valor: obterTexto("fd_m_ido") },
+            { id: "Escolaridade_Sem", valor: obterTexto("fd_e_sem") },
+            { id: "Escolaridade_Fundamental", valor: obterTexto("fd_e_fun") },
+            { id: "Escolaridade_Medio", valor: obterTexto("fd_e_med") },
+            { id: "Escolaridade_Superior", valor: obterTexto("fd_e_sup") },
+            { id: "Tipo_Construcao", valor: infConst },
+            { id: "Abastecimento_Agua", valor: obterCheckboxes("inf_agua") },
+            { id: "Energia_Eletrica", valor: obterCheckboxes("inf_luz") + (obterTexto("fd_inf_luz_outro") !== "" ? ` | Outro: ${obterTexto("fd_inf_luz_outro")}` : "") },
+            { id: "Possui_Banheiro", valor: obterRadio("inf_banho") },
+            { id: "Destinacao_Efluentes", valor: obterCheckboxes("inf_efl") },
+            { id: "Benfeitorias_Lista", valor: obterCheckboxes("benf") },
+            { id: "Benfeitorias_Estradas_Km", valor: obterTexto("fd_benf_est") },
+            { id: "Benfeitorias_Cercas_Km", valor: obterTexto("fd_benf_cer") },
+            { id: "Benfeitorias_Outros_Desc", valor: obterTexto("fd_benf_outro") },
+            { id: "Lav_Temp_Milho_Ha", valor: obterTexto("fd_lavt_milho") },
+            { id: "Lav_Temp_Feijao_Ha", valor: obterTexto("fd_lavt_feijao") },
+            { id: "Lav_Temp_Mandioca_Ha", valor: obterTexto("fd_lavt_mandioca") },
+            { id: "Lav_Temp_Outras_Ha", valor: obterTexto("fd_lavt_outras") },
+            { id: "Lav_Temp_Horticolas_Ha", valor: obterTexto("fd_lavt_horti") },
+            { id: "Lav_Temp_Rocado_Ha", valor: obterTexto("fd_lavt_rocado") },
+            { id: "Lav_Perm_Frutiferas", valor: obterCheckboxes("lav_perm") },
+            { id: "Lav_Perm_Pomar_Ha", valor: obterTexto("fd_lavp_pomar") },
+            { id: "Criacao_Aves", valor: obterTexto("fd_cria_aves") },
+            { id: "Criacao_Suinos", valor: obterTexto("fd_cria_sui") },
+            { id: "Criacao_Pequenos_Animais", valor: obterTexto("fd_cria_peq") },
+            { id: "Criacao_Bovinos", valor: obterTexto("fd_cria_bov") },
+            { id: "Criacao_Grande_Porte", valor: obterTexto("fd_cria_gde") },
+            { id: "Extrativismo_Pequi_Kg_Ano", valor: obterTexto("fd_ext_pequi") },
+            { id: "Extrativismo_Baru_Kg_Ano", valor: obterTexto("fd_ext_baru") },
+            { id: "Extrativismo_Outros_Kg_Ano", valor: obterTexto("fd_ext_out") },
+            { id: "Extrativismo_Madeira_Domestica", valor: document.getElementById("fd_ext_mad").checked ? "Sim" : "Não" },
+            { id: "Pratica_Pesca", valor: obterRadio("pesca") },
+            { id: "Pratica_Pesca_Especies", valor: obterTexto("fd_pesca_esp") },
+            { id: "Pratica_Caca", valor: obterRadio("caca") },
+            { id: "Pratica_Caca_Especies", valor: obterTexto("fd_caca_esp") },
+            { id: "Impactos_Baixo_Medio", valor: obterCheckboxes("imp_b") + (obterTexto("fd_imp_b_outro") !== "" ? ` | Outro: ${obterTexto("fd_imp_b_outro")}` : "") },
+            { id: "Impacto_Alto_Significativo", valor: obterRadio("imp_alto") },
+            { id: "Impacto_Alto_Descricao", valor: obterTexto("fd_imp_alto_desc") },
+            { id: "Conflitos_Socioambientais", valor: obterCheckboxes("conf") },
+            { id: "Conflitos_Socioambientais_Desc", valor: obterTexto("fd_conf_desc") },
+            { id: "Grupo_Etnico", valor: grupoEtnico },
+            { id: "Data_Hora_Coleta_Sistema", valor: new Date().toLocaleDateString('pt-BR') + " " + new Date().toLocaleTimeString('pt-BR') }
+        ];
+
+        const cabecalhos = mapeamentoDados.map(d => d.id).join(";");
+        const valores = mapeamentoDados.map(d => escaparCSV(d.valor)).join(";");
+        
+        const csvCompleto = cabecalhos + "\n" + valores;
+        
+        const blob = new Blob(["\uFEFF" + csvCompleto], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const idLimpo = obterTexto("fd_id_imovel").replace(/[^a-zA-Z0-9]/g, "_") || "Sem_ID";
+        
+        const linkDownload = document.createElement("a");
+        linkDownload.setAttribute("href", url);
+        linkDownload.setAttribute("download", `PESA_Imovel_${idLimpo}.csv`);
+        document.body.appendChild(linkDownload);
+        
+        linkDownload.click();
+        document.body.removeChild(linkDownload);
+    }
+
+    function gerarKML() {
+        // Captura as coordenadas diretamente e substitui vírgulas por pontos se digitadas manualmente
+        let lng = obterTexto("fd_coord_o").replace(",", ".");
+        let lat = obterTexto("fd_coord_s").replace(",", ".");
+        
+        // Impede a geração se os dados geográficos vitais estiverem ausentes
+        if (!lat || !lng) {
+            alert("⚠️ Não é possível gerar o mapa KML sem coordenadas de Longitude (Oeste) e Latitude (Sul). Por favor, capture via GPS ou digite os valores.");
+            return;
+        }
+
+        // Variáveis organizadas para renderizar o balão informativo interno do KML
+        const idImovel = obterTexto("fd_id_imovel") || "Não informado";
+        const nomeResp = obterTexto("fd_nome_resp") || "Não informado";
+        const nomeEnt = obterTexto("fd_nome_ent") || "Não informado";
+        const estabelecimento = obterTexto("fd_nome_est_prop") || "Não especificado";
+        const setor = obterRadio("setor") || "Não informado";
+        const dataInspecao = formatarDataBR(obterTexto("fd_data")) || "Não informada";
+        const areaImovel = obterTexto("fd_area_total") || "Não informada";
+
+        // Geração da estrutura XML padrão compatível com Google Earth e QGIS
+        const kmlTexto = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Imóvel PESA - ID ${idImovel}</name>
+    <Placemark>
+      <name>ID ${idImovel} (${estabelecimento})</name>
+      <description><![CDATA[
+        <div style="font-family: Arial, sans-serif; min-width: 260px; color: #0f172a; padding: 5px;">
+          <h3 style="color: #1e3a8a; margin: 0 0 10px 0; border-bottom: 2px solid #1e3a8a; padding-bottom: 5px; font-size: 1.1rem;">Levantamento Técnico PESA</h3>
+          <p style="margin: 4px 0;"><b>ID do Imóvel:</b> ${idImovel}</p>
+          <p style="margin: 4px 0;"><b>Estabelecimento:</b> ${estabelecimento}</p>
+          <p style="margin: 4px 0;"><b>Responsável:</b> ${nomeResp}</p>
+          <p style="margin: 4px 0;"><b>Entrevistado:</b> ${nomeEnt}</p>
+          <p style="margin: 4px 0;"><b>Setor de Campo:</b> ${setor}</p>
+          <p style="margin: 4px 0;"><b>Área Informada:</b> ${areaImovel}</p>
+          <p style="margin: 4px 0;"><b>Data de Coleta:</b> ${dataInspecao}</p>
+          <hr style="border: 0; border-top: 1px solid #cbd5e1; margin: 10px 0;">
+          <p style="margin: 4px 0; font-size: 0.85rem; color: #64748b;"><b>Coordenadas:</b> Long: ${lng} / Lat: ${lat}</p>
+        </div>
+      ]]></description>
+      <Point>
+        <coordinates>${lng},${lat},0</coordinates>
+      </Point>
+    </Placemark>
+  </Document>
+</kml>`;
+
+        // Construção do arquivo de texto bruto mapeado como XML/KML
+        const blob = new Blob([kmlTexto], { type: 'application/vnd.google-earth.kml+xml;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const idLimpo = idImovel.replace(/[^a-zA-Z0-9]/g, "_") || "Sem_ID";
+        
+        // Gatilho invisível para disparar o download no navegador/mobile de modo nativo
+        const linkDownload = document.createElement("a");
+        linkDownload.setAttribute("href", url);
+        linkDownload.setAttribute("download", `PESA_Imovel_${idLimpo}.kml`);
+        document.body.appendChild(linkDownload);
+        
+        linkDownload.click();
+        document.body.removeChild(linkDownload);
+    }
+</script>
+
+</body>
+</html>
